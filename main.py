@@ -12,6 +12,8 @@ def exibir_funcionario(funcionario):
         print('STATUS: Ativo')
     else:
         print('STATUS: Inativo')
+    print()
+    print('-' * 40)
 
 
 def exibir_menu():
@@ -62,7 +64,6 @@ def listar_funcionarios():
 
     for funcionario in funcionarios:
         exibir_funcionario(funcionario)
-        print('-' * 40)
 
 
 def buscar_funcionario():
@@ -85,6 +86,62 @@ def buscar_funcionario():
     print('Funcionário não encontrado.')
 
 
+def atualizar_funcionario():
+    print('\n--- Atualizar funcionário ---')
+
+    if not funcionarios:
+        print('Nenhum funcionário cadastrado.')
+        return
+
+    try:
+        id_busca = int(input('Digite o ID do funcionário: '))
+    except ValueError:
+        print('O ID deve ser um número inteiro.')
+        return
+    
+    for funcionario in funcionarios:
+        if funcionario['id'] == id_busca:
+            exibir_funcionario(funcionario)
+
+            print('\n--- Insira os novos dados do funcionário ---')
+
+            novo_nome = input(
+                f"Novo nome [{funcionario['nome']}]: "
+            ).strip()
+            if novo_nome:
+                funcionario['nome'] = novo_nome
+
+            novo_cargo = input(
+                f"Novo cargo [{funcionario['cargo']}]: "
+            ).strip()
+            if novo_cargo:
+                funcionario['cargo'] = novo_cargo
+
+            novo_setor = input(
+                f"Novo setor [{funcionario['setor']}]: "
+            ).strip()
+            if novo_setor:
+                funcionario['setor'] = novo_setor
+
+            novo_salario = input(
+                f"Novo salario [{funcionario['salario']:.2f}]: "
+            ).strip()
+            if novo_salario:
+                try:
+                    novo_salario = float(novo_salario.replace(',', '.'))
+                    funcionario['salario'] = novo_salario
+                except ValueError:
+                    print('O salario deve ser um número valido.')
+                    return
+            
+            print('Funcionário atualizado com sucesso.')
+            print()
+            exibir_funcionario(funcionario)
+            return        
+
+    print('Funcionário não encontrado.')
+
+
 while True:
     opcao = exibir_menu()
     if opcao == '1':
@@ -94,7 +151,7 @@ while True:
     elif opcao == '3':
         buscar_funcionario()
     elif opcao == '4':
-        print('Opção Atualizar funcionário selecionada.')
+        atualizar_funcionario()
     elif opcao == '5':
         print('Opção Excluir funcionário selecionada.')
     elif opcao == '6':
