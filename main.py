@@ -29,16 +29,50 @@ def exibir_menu():
     return opcao
 
 
+def solicitar_texto_obrigatorio(mensagem):
+    while True:
+        valor = input(mensagem).strip()
+        if not valor:
+            print('Este campo precisa ser preenchido.')
+            continue
+        
+        return valor
+
+
+def solicitar_salario(mensagem):
+    while True:
+        try:
+            valor = float(
+                input(mensagem).strip().replace(',', '.')
+            )
+        except ValueError:
+            print('Digite um salário válido.')
+            continue
+
+        if valor <= 0:
+            print('O salário deve ser maior que zero.')
+            continue
+        
+        return valor
+
+
 def cadastrar_funcionario():
     print('\n--- Cadastro de funcionário ---')
 
-    novo_id = len(funcionarios) + 1
+    if not funcionarios:
+        novo_id = 1
+    else:
+        ids_existentes = [
+            funcionario['id']
+            for funcionario in funcionarios
+        ]
+        novo_id = max(ids_existentes) + 1
 
-    nome = input('Nome: ').strip()
-    cpf = input('CPF: ').strip()
-    cargo = input('Cargo: ').strip()
-    setor = input('Setor: ').strip()
-    salario = float(input('Salário: R$ ').replace(',', '.'))
+    nome = solicitar_texto_obrigatorio('Nome: ')
+    cpf = solicitar_texto_obrigatorio('CPF: ')
+    cargo = solicitar_texto_obrigatorio('Cargo: ')
+    setor = solicitar_texto_obrigatorio('Setor: ')
+    salario = solicitar_salario('Salário: R$ ')
 
     funcionario = {
         'id': novo_id,
@@ -101,44 +135,96 @@ def atualizar_funcionario():
     
     for funcionario in funcionarios:
         if funcionario['id'] == id_busca:
+            print('\n--- Dados atuais ---')
             exibir_funcionario(funcionario)
 
-            print('\n--- Insira os novos dados do funcionário ---')
+            print('\n--- Insira os novos dados ---')
+            print('Pressione ENTER para manter o valor atual.')
 
             novo_nome = input(
                 f"Novo nome [{funcionario['nome']}]: "
             ).strip()
-            if novo_nome:
-                funcionario['nome'] = novo_nome
 
             novo_cargo = input(
                 f"Novo cargo [{funcionario['cargo']}]: "
             ).strip()
-            if novo_cargo:
-                funcionario['cargo'] = novo_cargo
 
             novo_setor = input(
                 f"Novo setor [{funcionario['setor']}]: "
             ).strip()
-            if novo_setor:
-                funcionario['setor'] = novo_setor
 
             novo_salario = input(
-                f"Novo salario [{funcionario['salario']:.2f}]: "
+                f"Novo salário [{funcionario['salario']:.2f}]: "
             ).strip()
+
+            nome_final = novo_nome or funcionario['nome']
+            cargo_final = novo_cargo or funcionario['cargo']
+            setor_final = novo_setor or funcionario['setor']
+            salario_final = funcionario['salario']
+
             if novo_salario:
                 try:
-                    novo_salario = float(novo_salario.replace(',', '.'))
-                    funcionario['salario'] = novo_salario
+                    salario_convertido = float(
+                        novo_salario.replace(',', '.')
+                    )
                 except ValueError:
-                    print('O salario deve ser um número valido.')
+                    print('O salário deve ser um número valido.')
                     return
+                
+                if salario_convertido <= 0:
+                    print('O salário deve ser maior que zero.')
+                    return
+                
+                salario_final = salario_convertido
             
+            funcionario['nome'] = nome_final
+            funcionario['cargo'] = cargo_final
+            funcionario['setor'] = setor_final
+            funcionario['salario'] = salario_final         
+
             print('Funcionário atualizado com sucesso.')
             print()
             exibir_funcionario(funcionario)
             return        
 
+    print('Funcionário não encontrado.')
+
+
+def excluir_funcionario():
+    print('\n--- Excluir funcionário ---')
+
+    if not funcionarios:
+        print('Nenhum funcionário cadastrado.')
+        return
+    
+    try:
+        id_busca = int(input('Digite o ID do funcionário: '))
+    except ValueError:
+        print('O ID deve ser um número inteiro.')
+        return
+    
+    for funcionario in funcionarios:
+        if funcionario['id'] == id_busca:
+            exibir_funcionario(funcionario)
+            print()
+            print(f"--- Deseja excluir o funcionário {funcionario['nome']}? ---")
+
+            confirmacao = input(
+                'Pressione ENTER para confirmar ou digite N para cancelar: '
+            ).strip().lower()
+            
+            if confirmacao == 'n':
+                print('Exclusão cancelada')
+                return
+            
+            if confirmacao == '':
+                funcionarios.remove(funcionario)
+                print('\nFuncionario removido com sucesso!')
+                return
+
+            print('Opção de confirmação inválida.')
+            return
+    
     print('Funcionário não encontrado.')
 
 
@@ -153,7 +239,7 @@ while True:
     elif opcao == '4':
         atualizar_funcionario()
     elif opcao == '5':
-        print('Opção Excluir funcionário selecionada.')
+        excluir_funcionario()
     elif opcao == '6':
         print('Opção Gerar relatórios selecionada.')
     elif opcao == '0':
