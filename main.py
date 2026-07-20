@@ -1,6 +1,19 @@
 funcionarios = []
 
 
+def exibir_funcionario(funcionario):
+    print(f"ID: {funcionario['id']}")
+    print(f"NOME: {funcionario['nome']}")
+    print(f"CPF: {funcionario['cpf']}")
+    print(f"CARGO: {funcionario['cargo']}")
+    print(f"SETOR: {funcionario['setor']}")
+    print(f"SALÁRIO: R$ {funcionario['salario']:.2f}")
+    if funcionario['ativo']:
+        print('STATUS: Ativo')
+    else:
+        print('STATUS: Inativo')
+
+
 def exibir_menu():
     print('\n--- Sistema de Gestão de Funcionários ---')
     print('1 - Cadastrar funcionário')
@@ -48,19 +61,28 @@ def listar_funcionarios():
         return
 
     for funcionario in funcionarios:
-        print(f"ID: {funcionario['id']}")
-        print(f"NOME: {funcionario['nome']}")
-        print(f"CPF: {funcionario['cpf']}")
-        print(f"CARGO: {funcionario['cargo']}")
-        print(f"SETOR: {funcionario['setor']}")
-        print(f"SALÁRIO: R$ {funcionario['salario']:.2f}")
-
-        if funcionario['ativo']:
-            print(f"STATUS: Funcionário {funcionario['nome']} ativo")
-        else:
-            print(f"STATUS: Funcionário {funcionario['nome']} inativo")
-
+        exibir_funcionario(funcionario)
         print('-' * 40)
+
+
+def buscar_funcionario():
+    print('\n--- Buscar funcionário ---')
+
+    if not funcionarios:
+        print('Nenhum funcionário cadastrado.')
+        return
+    
+    try:
+        id_busca = int(input('Digite o ID do funcionário: '))
+    except ValueError:
+        print('O ID deve ser um número inteiro.')
+        return
+    
+    for funcionario in funcionarios:
+        if funcionario['id'] == id_busca:
+            exibir_funcionario(funcionario)
+            return
+    print('Funcionário não encontrado.')
 
 
 while True:
@@ -70,7 +92,7 @@ while True:
     elif opcao == '2':
         listar_funcionarios()
     elif opcao == '3':
-        print('Opção Buscar funcionário selecionada.')
+        buscar_funcionario()
     elif opcao == '4':
         print('Opção Atualizar funcionário selecionada.')
     elif opcao == '5':
