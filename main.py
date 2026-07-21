@@ -23,7 +23,8 @@ def exibir_menu():
     print('3 - Buscar funcionário')
     print('4 - Atualizar funcionário')
     print('5 - Excluir funcionário')
-    print('6 - Gerar relatórios')
+    print('6 - Alterar status do funcionário')
+    print('7 - Gerar relatórios')
     print('0 - Sair')
     opcao = input('Digite a opção desejada: ').strip()
     return opcao
@@ -228,6 +229,78 @@ def excluir_funcionario():
     print('Funcionário não encontrado.')
 
 
+def alterar_status_funcionario():
+    print('\n--- Alterar status do funcionário ---')
+
+    if not funcionarios:
+        print('Nenhum funcionário cadastrado.')
+        return
+    try:
+        id_busca = int(input('Digite o ID do funcionário: '))
+    except ValueError:
+        print('O ID deve ser um número inteiro.')
+        return
+    
+    for funcionario in funcionarios:
+        if funcionario['id'] == id_busca:
+            exibir_funcionario(funcionario)
+
+            novo_status = input(
+                'Digite A para ativo ou I para inativo: '
+            ).strip().lower()
+
+            if novo_status == 'a':
+                funcionario['ativo'] = True
+                print('Funcionário ativado com sucesso.')
+
+            elif novo_status == 'i':
+                funcionario['ativo'] = False
+                print('Funcionário inativado com sucesso.')
+
+            else:
+                print('Opção inválida.')
+                return 
+        
+            exibir_funcionario(funcionario)
+            return
+        
+    print('Funcionário não encontrado.')
+
+
+def gerar_relatorios():
+    print('\n--- Relatório de funcionários ---')
+
+    if not funcionarios:
+        print('Nenhum funcionário cadastrado.')
+        return
+    
+    total_funcionarios = len(funcionarios)
+    print(f"Total funcionários: {total_funcionarios}")
+
+    total_ativos = 0
+    total_inativos = 0
+    folha_salarial = 0
+
+    for funcionario in funcionarios:
+        if funcionario['ativo']:
+            total_ativos += 1
+            folha_salarial += funcionario['salario']
+
+        else:
+            total_inativos += 1
+
+    print(f"Funcionários ativos: {total_ativos}")
+    print(f"Funcionários inativos: {total_inativos}")
+    print(f"Folha salarial dos ativos: R$ {folha_salarial:.2f}")
+
+    if total_ativos > 0:
+        media_salarios = folha_salarial / total_ativos
+    else:
+        media_salarios = 0
+
+    print(f"Média salarial dos ativos: R$ {media_salarios:.2f}")
+
+
 while True:
     opcao = exibir_menu()
     if opcao == '1':
@@ -241,7 +314,9 @@ while True:
     elif opcao == '5':
         excluir_funcionario()
     elif opcao == '6':
-        print('Opção Gerar relatórios selecionada.')
+        alterar_status_funcionario()
+    elif opcao == '7':
+        gerar_relatorios()
     elif opcao == '0':
         print('Opção Sair selecionada.')
         print('\nPrograma encerrado. Até breve!')
