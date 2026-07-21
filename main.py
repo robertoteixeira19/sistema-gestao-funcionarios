@@ -1,4 +1,33 @@
-funcionarios = []
+import json
+
+
+ARQUIVO_DADOS = 'funcionarios.json'
+
+
+def carregar_funcionarios():
+    try:
+        with open(ARQUIVO_DADOS, 'r', encoding='utf-8') as arquivo:
+            return json.load(arquivo)
+
+    except FileNotFoundError:
+        return []
+    
+    except json.JSONDecodeError:
+        print('O arquivo de dados está vazio ou inválido.')
+        return []
+
+
+funcionarios = carregar_funcionarios()
+
+
+def salvar_funcionarios():
+    with open(ARQUIVO_DADOS, 'w', encoding='utf-8') as arquivo:
+        json.dump(
+            funcionarios, 
+            arquivo, 
+            ensure_ascii=False, 
+            indent=4,
+        )
 
 
 def exibir_funcionario(funcionario):
@@ -86,6 +115,7 @@ def cadastrar_funcionario():
     }
 
     funcionarios.append(funcionario)
+    salvar_funcionarios()
 
     print(f'Funcionário {nome} cadastrado com sucesso!')
 
@@ -181,7 +211,9 @@ def atualizar_funcionario():
             funcionario['nome'] = nome_final
             funcionario['cargo'] = cargo_final
             funcionario['setor'] = setor_final
-            funcionario['salario'] = salario_final         
+            funcionario['salario'] = salario_final   
+
+            salvar_funcionarios()      
 
             print('Funcionário atualizado com sucesso.')
             print()
@@ -220,6 +252,7 @@ def excluir_funcionario():
             
             if confirmacao == '':
                 funcionarios.remove(funcionario)
+                salvar_funcionarios()
                 print('\nFuncionario removido com sucesso!')
                 return
 
@@ -260,6 +293,8 @@ def alterar_status_funcionario():
             else:
                 print('Opção inválida.')
                 return 
+            
+            salvar_funcionarios()
         
             exibir_funcionario(funcionario)
             return
