@@ -1,33 +1,21 @@
-import json
-
-
-ARQUIVO_DADOS = 'funcionarios.json'
-
-
-def carregar_funcionarios():
-    try:
-        with open(ARQUIVO_DADOS, 'r', encoding='utf-8') as arquivo:
-            return json.load(arquivo)
-
-    except FileNotFoundError:
-        return []
-    
-    except json.JSONDecodeError:
-        print('O arquivo de dados está vazio ou inválido.')
-        return []
+from dados import carregar_funcionarios, salvar_funcionarios
 
 
 funcionarios = carregar_funcionarios()
 
 
-def salvar_funcionarios():
-    with open(ARQUIVO_DADOS, 'w', encoding='utf-8') as arquivo:
-        json.dump(
-            funcionarios, 
-            arquivo, 
-            ensure_ascii=False, 
-            indent=4,
-        )
+def exibir_menu():
+    print('\n--- Sistema de Gestão de Funcionários ---')
+    print('1 - Cadastrar funcionário')
+    print('2 - Listar funcionários')
+    print('3 - Buscar funcionário')
+    print('4 - Atualizar funcionário')
+    print('5 - Excluir funcionário')
+    print('6 - Alterar status do funcionário')
+    print('7 - Gerar relatórios')
+    print('0 - Sair')
+    opcao = input('Digite a opção desejada: ').strip()
+    return opcao
 
 
 def exibir_funcionario(funcionario):
@@ -43,20 +31,6 @@ def exibir_funcionario(funcionario):
         print('STATUS: Inativo')
     print()
     print('-' * 40)
-
-
-def exibir_menu():
-    print('\n--- Sistema de Gestão de Funcionários ---')
-    print('1 - Cadastrar funcionário')
-    print('2 - Listar funcionários')
-    print('3 - Buscar funcionário')
-    print('4 - Atualizar funcionário')
-    print('5 - Excluir funcionário')
-    print('6 - Alterar status do funcionário')
-    print('7 - Gerar relatórios')
-    print('0 - Sair')
-    opcao = input('Digite a opção desejada: ').strip()
-    return opcao
 
 
 def solicitar_texto_obrigatorio(mensagem):
@@ -115,7 +89,7 @@ def cadastrar_funcionario():
     }
 
     funcionarios.append(funcionario)
-    salvar_funcionarios()
+    salvar_funcionarios(funcionarios)
 
     print(f'Funcionário {nome} cadastrado com sucesso!')
 
@@ -213,7 +187,7 @@ def atualizar_funcionario():
             funcionario['setor'] = setor_final
             funcionario['salario'] = salario_final   
 
-            salvar_funcionarios()      
+            salvar_funcionarios(funcionarios)      
 
             print('Funcionário atualizado com sucesso.')
             print()
@@ -252,7 +226,7 @@ def excluir_funcionario():
             
             if confirmacao == '':
                 funcionarios.remove(funcionario)
-                salvar_funcionarios()
+                salvar_funcionarios(funcionarios)
                 print('\nFuncionario removido com sucesso!')
                 return
 
@@ -294,7 +268,7 @@ def alterar_status_funcionario():
                 print('Opção inválida.')
                 return 
             
-            salvar_funcionarios()
+            salvar_funcionarios(funcionarios)
         
             exibir_funcionario(funcionario)
             return
